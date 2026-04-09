@@ -30,11 +30,8 @@ set(SOURCES
     Engine/Mesh.cpp
     Engine/OBJLoader.cpp
     Engine/Camera.cpp
-    Engine/Chunk.cpp
-    Engine/World.cpp
     Engine/Deimgui.cpp
-    Engine/FileBrowser
-
+    Engine/FileBrowser.cpp
 
 
 

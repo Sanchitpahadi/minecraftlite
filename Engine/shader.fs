@@ -8,10 +8,15 @@ out vec4 FragColor;
 uniform vec3 objectColor;
 uniform vec3 lightPos;
 uniform vec3 lightColor;
-uniform vec3 viewPos;   // camera position
+uniform vec3 viewPos;
+uniform sampler2D texture0;
 
 void main()
 {
+    // Sample texture
+    vec4 texColor = texture(texture0, TexCoord);
+    vec3 texRGB = texColor.rgb;
+
     // Ambient
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * lightColor;
@@ -26,9 +31,10 @@ void main()
     float specularStrength = 0.5;
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
     vec3 specular = specularStrength * spec * lightColor;
 
-    vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
+    // Combine: use texture color instead of objectColor
+    vec3 result = (ambient + diffuse + specular) * texRGB;
+    FragColor = vec4(result, texColor.a);
 }

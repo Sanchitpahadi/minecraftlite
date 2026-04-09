@@ -15,26 +15,29 @@ public:
 
     Light()
     {
-    lightShader.Init("light.vs", "light.fs");
+
+    }
+    void Init() {
+        lightShader.Init("light.vs", "light.fs");
     }
 
+void UploadToShader(Shader& shader, glm::vec3& viewPos) {
+    shader.setVec3("lightPos", position);           // vec3, not mat4
+    shader.setVec3("lightColor", color);            // vec3, not mat4
+    shader.setVec3("viewPos", viewPos);             // vec3, not mat4
+}
 
-    void UploadToShader(Shader& shader, glm::vec3& viewPos) {
-        glUniform3fv(glGetUniformLocation(shader.ID, "lightPos"),   1, glm::value_ptr(position));
-        glUniform3fv(glGetUniformLocation(shader.ID, "lightColor"), 1, glm::value_ptr(color));
-        glUniform3fv(glGetUniformLocation(shader.ID, "viewPos"),    1, glm::value_ptr(viewPos));
-    }
-
-    void Render(glm::mat4& view, glm::mat4& projection) {
-        if (!mesh) return;
-        lightShader.use();  // ← renamed to lightShader everywhere
-        glm::mat4 m = glm::translate(glm::mat4(1.f), position);
-        m = glm::scale(m, glm::vec3(0.2f));
-        glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"),      1, GL_FALSE, glm::value_ptr(m));
-        glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "view"),       1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniform3fv(glGetUniformLocation(lightShader.ID, "color"), 1, glm::value_ptr(color));
-
-        mesh->Draw();
-    }
+void Render(glm::mat4& view, glm::mat4& projection) {
+    if (!mesh) return;
+    lightShader.use();
+    glm::mat4 m = glm::translate(glm::mat4(1.f), position);
+    m = glm::scale(m, glm::vec3(0.2f));
+    
+    lightShader.setMat4("model", m);
+    lightShader.setMat4("view", view);
+    lightShader.setMat4("projection", projection);  // ← ADD THIS
+    lightShader.setVec3("color", color);
+    
+    mesh->Draw();
+}
 };

@@ -13,10 +13,11 @@
 class Shader
 {
 public:
-    unsigned int ID;
+    unsigned int ID ;
     Shader()
     {
     }
+          
 
    void Init(const char* vertexPath, const char* fragmentPath)
     {
@@ -67,25 +68,39 @@ public:
 
     void use()
     {
+          if (ID == 0) {
+            std::cerr << "ERROR: Shader not initialized. Call Init() first!" << std::endl;
+            return;
+        }
         glUseProgram(ID);
     }
 
-    void setBool(const std::string& name, bool value) const
-    {
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+void setMat4(const std::string& name, const glm::mat4& mat) const
+{
+    if (ID == 0) {
+        std::cerr << "ERROR: Shader not initialized!" << std::endl;
+        return;
     }
+    glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+}
 
-    void setInt(const std::string& name, int value) const
-    {
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+void setVec3(const std::string& name, const glm::vec3& value) const
+{
+    if (ID == 0) {
+        std::cerr << "ERROR: Shader not initialized!" << std::endl;
+        return;
     }
+    glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
+}
 
-    void setFloat(const std::string& name, float value) const
-    {
-        glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+void setInt(const std::string& name, int value) const
+{
+    if (ID == 0) {
+        std::cerr << "ERROR: Shader not initialized!" << std::endl;
+        return;
     }
-
-    
+    glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+}
     inline unsigned int GetShaderProgram(){return ID;};
 
 private:

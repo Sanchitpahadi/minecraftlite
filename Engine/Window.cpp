@@ -66,7 +66,7 @@ bool Window::IsKeyPressed(int key) const
     return glfwGetKey(m_Window, key) == GLFW_PRESS;
 }
 
-GLFWwindow* Window::GetNativeWindow() const
+GLFWwindow* Window::GetNativeWindow()const
 {
     return m_Window;
 }
